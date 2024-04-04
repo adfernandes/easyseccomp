@@ -12,7 +12,7 @@ DESTDIR=$(mktemp -d)
 trap 'rm -rf $DESTDIR' EXIT
 
 cd "$1"
-for i in $(git tag -l | grep -Ev "next|-rc|2.6.11" | sort -r); do
+for i in $(git ls-remote --tags origin | awk '{print $2}' | grep -v '\^{}' | sed -e 's|refs/tags/||' | grep -Ev "next|-rc|2.6.11" | sort -r); do
     if git show "$i:arch/x86/entry/syscalls/syscall_64.tbl" > /dev/null 2>&1 ||
        git show "$i:arch/x86/syscalls/syscall_64.tbl" > /dev/null  2>&1; then
         # Dump all the archs
